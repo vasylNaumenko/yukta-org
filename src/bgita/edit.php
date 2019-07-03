@@ -125,6 +125,23 @@ if (isset($_POST['Edit_mist']) and isset($_POST['fedit']) and
             $stmt->execute($params);
             echo "<center>Спасибо!<br>Ваша корректировка сохранена во временной таблице.<br>  Вы можете сформировать файл с корректировками на странице 'Обновление' и отправить его на yukta@yukta.org редактору проекта.<br><br>Счастья Вам!";
 
+            //   regim 6 - gr_rus, 8 - gr_en, 9 - er_en, 10 - er_rus, 11 - er_src
+            $params_config = [
+                6 => ["gr", "gr_ind", "gr"],
+                8 => ["gr", "gr_ind", "gr_e"],
+                9 => ["er", "ecod", "eng"],
+                10 => ["er", "ecod", "rus"],
+            ];
+
+            $mode = $_POST['regim'];
+            if (!isset($params_config[$mode])) {
+                echo "<center>Warning: mode {$mode} not set. В этом режиме информация в базе данных пока не может быть сохранена.";
+            } else {
+                $params = $params_config[$mode];
+                $Qstr = "UPDATE {$params[0]} SET {$params[2]} = ? WHERE {$params[1]} = ?";
+                $stmt = $pdo->prepare($Qstr);
+                $stmt->execute([$Bstr, $_POST['cod']]);
+            }
         } else { // if  ($num < 1)
             echo "<center>Ваш ip заблокирован из-за многократной передачи некорректной информации";
         }
